@@ -170,3 +170,45 @@ def detect_cycle(dependency_graph):
                 return result
 
     return None
+
+
+
+
+def build_explanation(components):
+    """
+    Build a human-readable explanation for why a task was prioritized.
+    """
+
+    parts = []
+
+    # Urgency explanation
+    if components['urgency'] == 1.0:
+        parts.append("Past due (maximum urgency)")
+    elif components['urgency'] > 0.7:
+        parts.append("Very urgent")
+    elif components['urgency'] > 0.4:
+        parts.append("Moderately urgent")
+
+    # Importance explanation
+    if components['importance'] > 0.8:
+        parts.append("Highly important")
+    elif components['importance'] > 0.5:
+        parts.append("Important task")
+
+    # Effort explanation
+    if components['effort'] > 0.8:
+        parts.append("Quick win (low effort)")
+    elif components['effort'] < 0.2:
+        parts.append("High-effort task")
+
+    # Dependency explanation
+    if components['dependency'] > 0.7:
+        parts.append("Blocks many other tasks")
+    elif components['dependency'] > 0.0:
+        parts.append("Blocks some tasks")
+
+    # If nothing stands out
+    if not parts:
+        return "No strong priority factors."
+
+    return ", ".join(parts) + "."
