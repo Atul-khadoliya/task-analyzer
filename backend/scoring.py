@@ -73,25 +73,35 @@ def compute_dependency_score(task_id, dependency_graph):
 
 
 def compute_final_score(task, today, dependency_graph, weights):
-    """
-    Combines all factors into a final priority score.
-    Placeholder returns {
-        'score': 0.0,
-        'components': {}
-    }
-    """
+     # Extract components
+    U = compute_urgency(task.get("due_date"), today)
+    I = compute_importance(task.get("importance"))
+    E = compute_effort(task.get("estimated_hours"))
+    D = compute_dependency_score(task["id"], dependency_graph)
+
+    # Weighted sum
+    score = (
+        weights["urgency"] * U +
+        weights["importance"] * I +
+        weights["effort"] * E +
+        weights["dependency"] * D
+    )
+
+    # clamp to [0, 1]
+    score = max(0.0, min(1.0, score))
+
     return {
-        "score": 0.0,
+        "score": score,
         "components": {
-            "urgency": 0.0,
-            "importance": 0.0,
-            "effort": 0.0,
-            "dependency": 0.0
+            "urgency": U,
+            "importance": I,
+            "effort": E,
+            "dependency": D
         }
     }
 
 
-# Dependency graph helper (placeholder)
+# Dependency graph helper 
 
 
 def build_dependency_graph(tasks):
