@@ -53,11 +53,20 @@ def compute_effort(hours,max_effort=8):
     return max(0.0, min(1.0, score))
 
 def compute_dependency_score(task_id, dependency_graph):
-    """
-    Score based on how many tasks depend on this task.
-    Placeholder: returns 0.0 for now.
-    """
-    return 0.0
+    reverse = dependency_graph["reverse"]
+
+    # count direct dependents
+    dependents = reverse.get(task_id, [])
+    count = len(dependents)
+
+    # find global max dependents for normalization
+    all_counts = [len(reverse[tid]) for tid in reverse]
+    max_count = max(all_counts) if all_counts else 1
+
+    if max_count == 0:
+        return 0.0
+
+    return count / max_count
 
 
 # Final score combining function
