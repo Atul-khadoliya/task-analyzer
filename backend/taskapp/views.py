@@ -2,6 +2,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
 from .serializers import TaskSerializer
+from .models import AnalyzedTask
+import uuid
+
 from scoring import (
     compute_final_score,
     build_dependency_graph,
@@ -56,8 +59,28 @@ def analyze_placeholder(request):
             "components": result["components"]
         })
 
+        # Create new analysis session
+    session_id = uuid.uuid4()
+
+# Save tasks in database
+    for st in scored_tasks:
+        AnalyzedTask.objects.create(
+        session_id=session_id,
+        task_id=st["id"],
+        title=st["title"],
+        score=st["score"],
+        urgency=st["components"]["urgency"],
+        importance=st["components"]["importance"],
+        effort=st["components"]["effort"],
+        dependency=st["components"]["dependency"]
+    )
+
+
     # return the placeholder scoring results
-    return Response({"tasks": scored_tasks})
+    return Response({
+    "session_id": session_id,
+    "tasks": scored_tasks
+})
 
 
 
