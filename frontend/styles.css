@@ -1,0 +1,71 @@
+/* Basic page layout */
+body {
+    font-family: Arial, sans-serif;
+    margin: 20px;
+    padding: 0;
+    background: #f9f9f9;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Sections */
+.section {
+    background: white;
+    padding: 20px;
+    margin-bottom: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+/* Inputs */
+input, textarea, select, button {
+    width: 100%;
+    padding: 10px;
+    margin: 8px 0;
+    font-size: 14px;
+    box-sizing: border-box;
+}
+
+textarea {
+    height: 120px;
+    resize: vertical;
+}
+
+/* Results & suggestions */
+#results, #suggestions {
+    margin-top: 15px;
+}
+
+.task-card {
+    background: #ffffff;
+    border-left: 5px solid #ccc;
+    padding: 15px;
+    margin-bottom: 12px;
+    border-radius: 6px;
+}
+
+/* Priority colors (placeholder for now) */
+.priority-high {
+    border-color: #e74c3c;
+}
+
+.priority-medium {
+    border-color: #f39c12;
+}
+
+.priority-low {
+    border-color: #2ecc71;
+}
+
+/* Responsive design */
+@media (max-width: 600px) {
+    body {
+        margin: 10px;
+    }
+    .section {
+        padding: 15px;
+    }
+}
