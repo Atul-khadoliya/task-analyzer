@@ -1,13 +1,29 @@
-from datetime import date
+from datetime import datetime
 from dateutil.parser import parse as parse_date
 
 
-def compute_urgency(due_date, today):
-    """
-    Returns urgency score (0 to 1).
-    Placeholder: returns 0.0 for now.
-    """
-    return 0.0
+def compute_urgency(due_date, today,horizon=30):
+     if not due_date:
+        return 0.1  # missing due date → low urgency
+
+    # convert strings to date objects
+     if isinstance(due_date, str):
+        due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
+     if isinstance(today, str):
+        today = datetime.strptime(today, "%Y-%m-%d").date()
+
+     days_left = (due_date - today).days
+
+    # past due → maximum urgency
+     if days_left < 0:
+        return 1.0
+
+    # normalize relative to horizon
+     urgency = 1 - (days_left / horizon)
+
+    # clamp between 0 and 1
+     urgency = max(0.0, min(1.0, urgency))
+     return urgency
 
 def compute_importance(importance):
     """
