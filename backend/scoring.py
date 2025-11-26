@@ -36,12 +36,21 @@ def compute_importance(importance):
       return (importance - 1) / 9
     
 
-def compute_effort(hours):
-    """
-    Lower effort = higher score.
-    Placeholder: returns 0.0 for now.
-    """
-    return 0.0
+def compute_effort(hours,max_effort=8):
+    if hours is None:
+        hours = 4  # default medium effort
+
+    # ensure hours is non-negative
+    hours = max(0, hours)
+
+    # cap hours at max_effort
+    effective = min(hours, max_effort)
+
+    # invert (0 hours = 1.0, max_effort = 0.0)
+    score = 1 - (effective / max_effort)
+
+    # clamp to 0–1
+    return max(0.0, min(1.0, score))
 
 def compute_dependency_score(task_id, dependency_graph):
     """
