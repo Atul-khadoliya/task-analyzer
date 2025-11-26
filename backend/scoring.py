@@ -86,8 +86,27 @@ def compute_final_score(task, today, dependency_graph, weights):
 
 
 def build_dependency_graph(tasks):
-    """
-    Build a dependency graph and return it.
-    Placeholder: returns empty graph.
-    """
-    return {}
+    forward = {}
+    reverse = {}
+
+    # initialize all task ids
+    for task in tasks:
+        tid = task["id"]
+        forward[tid] = []
+        reverse[tid] = []
+
+    # fill edges
+    for task in tasks:
+        tid = task["id"]
+        deps = task.get("dependencies", [])
+
+        forward[tid] = deps
+
+        for dep in deps:
+            if dep in reverse:
+                reverse[dep].append(tid)
+
+    return {
+        "forward": forward,
+        "reverse": reverse
+    }
