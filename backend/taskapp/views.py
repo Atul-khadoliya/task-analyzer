@@ -1,8 +1,12 @@
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-
+from rest_framework import status
 from .serializers import TaskSerializer
-from scoring import compute_final_score, build_dependency_graph
+from scoring import (
+    compute_final_score,
+    build_dependency_graph,
+    detect_cycle
+)
 
 
 @api_view(['POST'])
@@ -23,6 +27,13 @@ def analyze_placeholder(request):
 
     # build dependency graph (empty for now)
     dep_graph = build_dependency_graph(validated_tasks)
+
+    cycle = detect_cycle(dep_graph)
+    if cycle:
+        return Response(
+            {"error": "Circular dependency detected", "cycle": cycle},
+            status=status.HTTP_400_BAD_REQUEST
+        )
 
     # default weights until implementing scoring
     weights = {

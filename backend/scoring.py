@@ -129,3 +129,44 @@ def build_dependency_graph(tasks):
         "forward": forward,
         "reverse": reverse
     }
+
+
+def detect_cycle(dependency_graph):
+    graph = dependency_graph["forward"]
+
+    visited = set()
+    in_stack = set()
+    parent = {}
+
+    def dfs(node):
+        visited.add(node)
+        in_stack.add(node)
+
+        for neighbor in graph.get(node, []):
+            if neighbor not in visited:
+                parent[neighbor] = node
+                result = dfs(neighbor)
+                if result:
+                    return result
+            elif neighbor in in_stack:
+                # cycle found → reconstruct path
+                cycle = [neighbor]
+                cur = node
+                while cur != neighbor:
+                    cycle.append(cur)
+                    cur = parent[cur]
+                cycle.append(neighbor)
+                cycle.reverse()
+                return cycle
+
+        in_stack.remove(node)
+        return None
+
+    # check all nodes
+    for node in graph:
+        if node not in visited:
+            result = dfs(node)
+            if result:
+                return result
+
+    return None
