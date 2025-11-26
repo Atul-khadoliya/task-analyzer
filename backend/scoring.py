@@ -26,11 +26,15 @@ def compute_urgency(due_date, today,horizon=30):
      return urgency
 
 def compute_importance(importance):
-    """
-    Normalize importance (1-10 scale).
-    Placeholder: returns 0.0 for now.
-    """
-    return 0.0
+      if importance is None:
+        importance = 5
+
+    # Ensure valid range
+      importance = max(1, min(10, importance))
+
+    # normalize: convert 1–10 range to 0–1
+      return (importance - 1) / 9
+    
 
 def compute_effort(hours):
     """
