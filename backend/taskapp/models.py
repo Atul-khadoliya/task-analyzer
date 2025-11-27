@@ -11,6 +11,8 @@ class AnalyzedTask(models.Model):
     importance = models.FloatField()
     effort = models.FloatField()
     dependency = models.FloatField()
+    due_date = models.DateField(null=True, blank=True)
+
     created_at = models.DateTimeField(default=timezone.now)
 
     class Meta:

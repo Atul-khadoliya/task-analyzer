@@ -80,12 +80,19 @@ def analyze_placeholder(request):
     scored_tasks = []
     for task in validated_tasks:
         result = compute_final_score(task, today, dep_graph, weights)
+        explanation = build_explanation(result["components"])
         scored_tasks.append({
             "id": task.get("id"),
             "title": task.get("title"),
+            "due_date": task.get("due_date"),      
+            "estimated_hours": task.get("estimated_hours"),
+            "importance": task.get("importance"),
+            "dependencies": task.get("dependencies"),
             "score": result["score"],
-            "components": result["components"]
+            "components": result["components"],
+            "explanation": explanation
         })
+
 
     # THIS IS THE CORRECT PLACE TO CREATE SESSION
     session_id = uuid.uuid4()
@@ -100,7 +107,8 @@ def analyze_placeholder(request):
             urgency=st["components"]["urgency"],
             importance=st["components"]["importance"],
             effort=st["components"]["effort"],
-            dependency=st["components"]["dependency"]
+            dependency=st["components"]["dependency"],
+            due_date=st.get("due_date") 
         )
 
     # Return results
@@ -149,6 +157,7 @@ def suggest_placeholder(request):
             "id": t.task_id,
             "title": t.title,
             "score": t.score,
+            "due_date": t.due_date,
             "why": build_explanation(components)
         })
 

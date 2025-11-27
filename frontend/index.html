@@ -7,56 +7,72 @@
 </head>
 
 <body>
+
     <h1>Smart Task Analyzer</h1>
 
-    <!-- Strategy Selection -->
-    <div class="section">
-        <label for="strategy">Sorting Strategy:</label>
-        <select id="strategy">
-            <option value="smart">Smart Balance</option>
-            <option value="fast">Fastest Wins</option>
-            <option value="impact">High Impact</option>
-            <option value="deadline">Deadline Driven</option>
-        </select>
-    </div>
+    <div class="container">
 
-    <!-- Add Task Form -->
-    <div class="section">
-        <h2>Add Task</h2>
-        <input id="title" placeholder="Title">
-        <input id="due_date" type="date">
-        <input id="hours" type="number" min="0" placeholder="Estimated Hours">
-        <input id="importance" type="number" min="1" max="10" placeholder="Importance (1–10)">
-        <input id="dependencies" placeholder="Dependencies (comma-separated IDs)">
-        <button id="add-task-btn">Add Task</button>
-        <p id="task-count">0 tasks added.</p>
-    </div>
+        <!-- Strategy Selection -->
+        <div class="section">
+            <h2 class="section-title">Sorting Strategy</h2>
 
-    <!-- Bulk JSON Input -->
-    <div class="section">
-        <h2>Bulk JSON Input</h2>
-        <textarea id="json-input" placeholder="Paste JSON array of tasks"></textarea>
-        <button id="load-json-btn">Load JSON</button>
-    </div>
+            <select id="strategy">
+                <option value="smart">Smart Balance</option>
+                <option value="fast">Fastest Wins</option>
+                <option value="impact">High Impact</option>
+                <option value="deadline">Deadline Driven</option>
+            </select>
+        </div>
 
-    <!-- Analyze Button -->
-    <div class="section">
-        <button id="analyze-btn">Analyze Tasks</button>
-    </div>
+        <!-- Add Task Form -->
+        <div class="section">
+            <h2 class="section-title">Add a Task</h2>
 
-    <!-- Results Section -->
-    <div class="section">
-        <h2>Analysis Results</h2>
-        <div id="results"></div>
-    </div>
+            <input id="task-id" placeholder="Task ID (e.g., A101)">
+            <input id="task-title" placeholder="Task Title">
+            <input id="task-due-date" type="date" placeholder="Due Date">
+            <input id="task-hours" type="number" min="0" placeholder="Estimated Hours">
+            <input id="task-importance" type="number" min="1" max="10" placeholder="Importance (1–10)">
+            <input id="task-dependencies" placeholder="Dependencies (comma-separated IDs)">
+            
+            <button id="add-task-btn" class="primary-btn">Add Task</button>
+            <p id="task-count">0 tasks added.</p>
+        </div>
 
-    <!-- Suggestions Section -->
-    <div class="section">
-        <h2>Top 3 Suggested Tasks</h2>
-        <button id="get-suggestions-btn">Get Suggestions</button>
-        <div id="suggestions"></div>
+        <!-- Bulk JSON Input -->
+        <div class="section">
+            <h2 class="section-title">Bulk JSON Input</h2>
+
+            <textarea id="json-input" placeholder='[
+    {"id": "A", "title": "Fix login", "due_date": "2025-12-01", "estimated_hours": 2, "importance": 7, "dependencies": []}
+]'></textarea>
+
+            <button id="load-json-btn" class="primary-btn">Load JSON</button>
+        </div>
+
+        <!-- Analyze -->
+        <div class="section">
+            <button id="analyze-btn" class="primary-btn">Analyze Tasks</button>
+            <button id="clear-tasks-btn" class="secondary-btn">Clear All Tasks</button>
+        </div>
+
+        <!-- Results -->
+        <div class="section">
+            <h2 class="section-title">Analysis Results</h2>
+            <div id="results"></div>
+            <div id="error-box" class="error-box"></div>
+        </div>
+
+        <!-- Suggestions -->
+        <div class="section">
+            <h2 class="section-title">Top 3 Suggested Tasks</h2>
+            <button id="get-suggestions-btn" class="primary-btn">Get Suggestions</button>
+
+            <div id="suggestions"></div>
+        </div>
     </div>
 
     <script src="script.js"></script>
+
 </body>
 </html>

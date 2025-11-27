@@ -69,3 +69,242 @@ textarea {
         padding: 15px;
     }
 }
+
+.priority-high {
+    border-left: 5px solid red;
+    background-color: #ffe5e5;
+}
+
+.priority-medium {
+    border-left: 5px solid orange;
+    background-color: #fff3e0;
+}
+
+.priority-low {
+    border-left: 5px solid green;
+    background-color: #e7ffe5;
+}
+.error-box {
+    margin-top: 15px;
+    padding: 12px;
+    color: white;
+    background: #d9534f;
+    border-radius: 6px;
+    display: none;
+}
+.secondary-btn {
+    background-color: #555;
+    color: white;
+    padding: 10px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    border: none;
+    margin-left: 10px;
+}
+
+.secondary-btn:hover {
+    background-color: #333;
+}
+/* ------------------------------------------
+   GLOBAL LAYOUT
+------------------------------------------ */
+body {
+    font-family: "Inter", Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background: #f4f6f9;
+    color: #333;
+}
+
+h1 {
+    text-align: center;
+    padding: 20px 0;
+    font-size: 26px;
+    font-weight: 700;
+    color: #2c3e50;
+}
+
+/* Container to center everything */
+.container {
+    max-width: 960px;
+    margin: auto;
+    padding: 20px;
+}
+
+/* ------------------------------------------
+   SECTIONS
+------------------------------------------ */
+.section {
+    background: white;
+    padding: 22px;
+    margin-bottom: 30px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+
+.section-title {
+    font-size: 20px;
+    font-weight: 600;
+    color: #34495e;
+    margin-bottom: 12px;
+    border-left: 4px solid #4a90e2;
+    padding-left: 10px;
+}
+
+/* ------------------------------------------
+   INPUT ELEMENTS
+------------------------------------------ */
+input, textarea, select {
+    width: 100%;
+    padding: 12px;
+    margin: 8px 0 15px 0;
+    font-size: 15px;
+    border: 1px solid #cfd6de;
+    border-radius: 8px;
+    background: #ffffff;
+    transition: 0.15s;
+}
+
+input:focus, textarea:focus, select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 4px rgba(74, 144, 226, 0.4);
+    outline: none;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+/* ------------------------------------------
+   BUTTONS
+------------------------------------------ */
+button {
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+button:hover {
+    opacity: 0.9;
+}
+
+button:disabled {
+    background: #a8c6e3 !important;
+    cursor: not-allowed;
+}
+
+.primary-btn {
+    background: #4a90e2;
+    color: white;
+}
+
+.secondary-btn {
+    background: #6c757d;
+    color: white;
+}
+
+.secondary-btn:hover {
+    background: #555;
+}
+
+/* ------------------------------------------
+   TASK CARDS
+------------------------------------------ */
+/* ----------------------------
+   MODERN CARD DESIGN
+-----------------------------*/
+.task-card, .suggestion-card {
+    background: white;
+    padding: 18px 20px;
+    border-radius: 14px;
+    margin-bottom: 20px;
+    border-left: 6px solid #d0d0d0;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.07);
+    transition: 0.2s ease;
+}
+
+.task-card:hover, .suggestion-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+}
+
+/* Card Titles */
+.card-title {
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    color: #2c3e50;
+}
+
+/* Card Grid Layout */
+.card-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0,1fr));
+    gap: 8px 18px;
+    margin-top: 10px;
+    font-size: 14px;
+    color: #444;
+}
+
+.card-grid p {
+    margin: 0;
+}
+
+/* Explanation styling */
+.explanation-box {
+    margin-top: 12px;
+    padding: 10px;
+    background: #f6f9fc;
+    border-radius: 8px;
+    font-size: 14px;
+    color: #555;
+    border-left: 4px solid #4a90e2;
+}
+
+/* Better priority colors */
+.priority-high {
+    border-left-color: #e74c3c;
+    background: #fdecea;
+}
+
+.priority-medium {
+    border-left-color: #f39c12;
+    background: #fff5e6;
+}
+
+.priority-low {
+    border-left-color: #27ae60;
+    background: #e8f7ef;
+}
+
+
+/* ------------------------------------------
+   ERROR BOX
+------------------------------------------ */
+.error-box {
+    margin-top: 15px;
+    padding: 14px;
+    color: white;
+    background: #d9534f;
+    border-radius: 8px;
+    display: none;
+    font-size: 14px;
+    white-space: pre-line;
+}
+
+/* ------------------------------------------
+   RESPONSIVE DESIGN
+------------------------------------------ */
+@media (max-width: 600px) {
+    .container {
+        padding: 12px;
+    }
+    .section {
+        padding: 18px;
+    }
+}

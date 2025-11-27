@@ -8,119 +8,160 @@ function updateTaskCount() {
 
 // Add task from form inputs
 document.getElementById("add-task-btn").addEventListener("click", () => {
-    const title = document.getElementById("title").value.trim();
-    const due_date = document.getElementById("due_date").value;
-    const hours = document.getElementById("hours").value;
-    const importance = document.getElementById("importance").value;
-    const dependencies = document.getElementById("dependencies").value;
+    const id = document.getElementById("task-id").value.trim();
+    const title = document.getElementById("task-title").value.trim();
+    const dueDate = document.getElementById("task-due-date").value.trim();
+    const estimatedHours = Number(document.getElementById("task-hours").value);
+    const importance = Number(document.getElementById("task-importance").value);
+    const dependenciesRaw = document.getElementById("task-dependencies").value.trim();
 
-    if (!title) {
-        alert("Title is required!");
+    // FRONTEND VALIDATION — must match backend rules
+    if (!id) {
+        alert("ID is required.");
         return;
     }
 
-    const task = {
-        id: "t" + (tasks.length + 1),
+    if (!title) {
+        alert("Title cannot be empty.");
+        return;
+    }
+
+    if (!dueDate) {
+        alert("Due date is required.");
+        return;
+    }
+
+    if (isNaN(Date.parse(dueDate))) {
+        alert("Invalid date format. Use YYYY-MM-DD.");
+        return;
+    }
+
+    if (isNaN(estimatedHours) || estimatedHours < 0) {
+        alert("Estimated hours must be a non-negative number.");
+        return;
+    }
+
+    if (importance < 1 || importance > 10) {
+        alert("Importance must be between 1 and 10.");
+        return;
+    }
+
+    const dependencies = dependenciesRaw
+        ? dependenciesRaw.split(",").map(d => d.trim())
+        : [];
+
+    // Only push task AFTER validation
+    tasks.push({
+        id,
         title,
-        due_date: due_date || null,
-        estimated_hours: hours ? parseFloat(hours) : null,
-        importance: importance ? parseInt(importance) : null,
-        dependencies: dependencies
-            ? dependencies.split(",").map(d => d.trim())
-            : []
-    };
+        due_date: dueDate,
+        estimated_hours: estimatedHours,
+        importance,
+        dependencies
+    });
 
-    tasks.push(task);
-    updateTaskCount();
-
-    // Clear inputs
-    document.getElementById("title").value = "";
-    document.getElementById("hours").value = "";
-    document.getElementById("importance").value = "";
-    document.getElementById("dependencies").value = "";
+    renderLocalTasks();
 });
+
 
 // Load tasks from JSON textarea
 document.getElementById("load-json-btn").addEventListener("click", () => {
-    const text = document.getElementById("json-input").value.trim();
+    const raw = document.getElementById("json-input").value.trim();
 
-    if (!text) {
-        alert("Please paste valid JSON.");
+    let parsed;
+    try {
+        parsed = JSON.parse(raw);
+    } catch (err) {
+        alert("Invalid JSON format.");
         return;
     }
 
-    try {
-        const jsonTasks = JSON.parse(text);
+    // FRONTEND JSON VALIDATION
+    for (let i = 0; i < parsed.length; i++) {
+        const t = parsed[i];
 
-        if (!Array.isArray(jsonTasks)) {
-            alert("JSON must be an array of tasks.");
+        if (!t.id || !String(t.id).trim()) {
+            alert(`Task ${i + 1}: ID is required.`);
             return;
         }
 
-        jsonTasks.forEach((t, index) => {
-            tasks.push({
-                id: t.id || "t" + (tasks.length + 1),
-                title: t.title || "Untitled Task",
-                due_date: t.due_date || null,
-                estimated_hours: t.estimated_hours ?? null,
-                importance: t.importance ?? null,
-                dependencies: t.dependencies || []
-            });
-        });
+        if (!t.title || !t.title.trim()) {
+            alert(`Task ${i + 1}: Title cannot be empty.`);
+            return;
+        }
 
-        updateTaskCount();
-        alert("Tasks loaded!");
-    } catch (error) {
-        alert("Invalid JSON!");
+        if (!t.due_date || isNaN(Date.parse(t.due_date))) {
+            alert(`Task ${i + 1}: Invalid due_date.`);
+            return;
+        }
+
+        if (t.estimated_hours < 0) {
+            alert(`Task ${i + 1}: Estimated hours must be >= 0.`);
+            return;
+        }
+
+        if (t.importance < 1 || t.importance > 10) {
+            alert(`Task ${i + 1}: Importance must be 1-10.`);
+            return;
+        }
     }
+
+    // Only accept JSON AFTER validation
+    tasks = parsed;
+    renderLocalTasks();
 });
+
 
 // Send tasks to backend for scoring
 document.getElementById("analyze-btn").addEventListener("click", async () => {
+    const btn = document.getElementById("analyze-btn");
 
-    if (tasks.length === 0) {
-        alert("Please add at least one task before analyzing.");
-        return;
-    }
-
-    const now = new Date();
-const today = now.getFullYear() + "-" +
-              String(now.getMonth() + 1).padStart(2, "0") + "-" +
-              String(now.getDate()).padStart(2, "0");
-    const strategy = document.getElementById("strategy").value;
-
-    const payload = {
-        today,
-        strategy,
-        tasks: tasks
-    };
+    // show loading state
+    btn.disabled = true;
+    btn.innerText = "Analyzing...";
+    document.getElementById("error-box").style.display = "none";
 
     try {
-        document.getElementById("results").innerHTML = "<p>Analyzing...</p>";
+        const strategy = document.getElementById("strategy").value;
+
+        const now = new Date();
+        const today = now.getFullYear() + "-" +
+                      String(now.getMonth() + 1).padStart(2, "0") + "-" +
+                      String(now.getDate()).padStart(2, "0");
+
+        const payload = { today, strategy, tasks };
 
         const response = await fetch("http://127.0.0.1:8000/api/tasks/analyze/", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
         });
 
         const data = await response.json();
 
         if (!response.ok) {
-            document.getElementById("results").innerHTML =
-                `<p style="color:red;">Error: ${data.error || "Unknown error"}</p>`;
+            document.getElementById("error-box").style.display = "block";
+            document.getElementById("error-box").innerText = JSON.stringify(data, null, 2);
             return;
         }
 
-        renderResults(data.tasks);
+        // enrich data with original task values
+        const enriched = data.tasks.map(t => {
+            const raw = tasks.find(x => x.id === t.id);
+            return { ...t, ...raw };
+        });
+
+        renderResults(enriched);
 
     } catch (err) {
-        document.getElementById("results").innerHTML =
-            `<p style="color:red;">Network error.</p>`;
+        document.getElementById("error-box").style.display = "block";
+        document.getElementById("error-box").innerText = "Network error.";
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Analyze Tasks";
     }
 });
+
 
 
 function renderResults(tasks) {
@@ -137,39 +178,60 @@ function renderResults(tasks) {
         card.className = `task-card ${priorityClass}`;
 
         card.innerHTML = `
-            <h3>${t.title}</h3>
-            <p><b>Score:</b> ${t.score.toFixed(3)}</p>
-            <p><b>Urgency:</b> ${t.components.urgency.toFixed(3)}</p>
-            <p><b>Importance:</b> ${t.components.importance.toFixed(3)}</p>
-            <p><b>Effort:</b> ${t.components.effort.toFixed(3)}</p>
-            <p><b>Dependency:</b> ${t.components.dependency.toFixed(3)}</p>
+            <div class="card-title">${t.title}</div>
+
+            <div class="card-grid">
+                <p><b>Priority:</b> ${t.score > 0.7 ? "High 🔥" : t.score >= 0.4 ? "Medium ⚠️" : "Low 🟢"}</p>
+                <p><b>Score:</b> ${t.score.toFixed(3)}</p>
+
+                <p><b>Urgency:</b> ${t.components.urgency.toFixed(3)}</p>
+                <p><b>Importance:</b> ${t.components.importance.toFixed(3)}</p>
+
+                <p><b>Effort:</b> ${t.components.effort.toFixed(3)}</p>
+                <p><b>Dependency:</b> ${t.components.dependency.toFixed(3)}</p>
+
+                <p><b>Due Date:</b> ${t.due_date}</p>
+                <p><b>Estimated Hours:</b> ${t.estimated_hours}</p>
+
+                <p><b>Importance Level:</b> ${t.importance}</p>
+            </div>
+
+            <div class="explanation-box">
+                <b>Explanation:</b> ${t.explanation}
+            </div>
         `;
 
         container.appendChild(card);
     });
 }
+
 // Fetch the top 3 suggested tasks from backend
 document.getElementById("get-suggestions-btn").addEventListener("click", async () => {
-    try {
-        document.getElementById("suggestions").innerHTML = "<p>Loading suggestions...</p>";
+    const btn = document.getElementById("get-suggestions-btn");
 
-        const response = await fetch("http://127.0.0.1:8000/api/tasks/suggest/", {
-            method: "GET"
-        });
+    btn.disabled = true;
+    btn.innerText = "Loading...";
+    document.getElementById("error-box").style.display = "none";
+
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/tasks/suggest/");
 
         const data = await response.json();
 
         if (!response.ok) {
-            document.getElementById("suggestions").innerHTML =
-                `<p style="color:red;">Error: ${data.error || "Unknown error"}</p>`;
+            document.getElementById("error-box").style.display = "block";
+            document.getElementById("error-box").innerText = data.error || "Error fetching suggestions.";
             return;
         }
 
         renderSuggestions(data.suggestions);
 
     } catch (err) {
-        document.getElementById("suggestions").innerHTML =
-            `<p style="color:red;">Network error.</p>`;
+        document.getElementById("error-box").style.display = "block";
+        document.getElementById("error-box").innerText = "Network error.";
+    } finally {
+        btn.disabled = false;
+        btn.innerText = "Get Suggestions";
     }
 });
 
@@ -185,16 +247,37 @@ function renderSuggestions(suggestions) {
             "priority-low";
 
         const card = document.createElement("div");
-        card.className = `task-card ${priorityClass}`;
+        card.className = `suggestion-card ${priorityClass}`;
 
         card.innerHTML = `
-            <h3>${s.title}</h3>
-            <p><b>Score:</b> ${s.score.toFixed(3)}</p>
-            <p><b>Why:</b> ${s.why}</p>
+            <div class="card-title">${s.title}</div>
+
+            <div class="card-grid">
+                <p><b>Score:</b> ${s.score.toFixed(3)}</p>
+                <p><b>Due Date:</b> ${s.due_date || "Not provided"}</p>
+            </div>
+
+            <div class="explanation-box">
+                <b>Why this task:</b> ${s.why}
+            </div>
         `;
 
         container.appendChild(card);
     });
 }
+
+document.getElementById("clear-tasks-btn").addEventListener("click", () => {
+    tasks = []; // empty task list
+
+    document.getElementById("results").innerHTML = "";
+    document.getElementById("suggestions").innerHTML = "";
+    document.getElementById("error-box").style.display = "none";
+
+    // also clear any local display of tasks
+    const taskContainer = document.getElementById("task-list");
+    if (taskContainer) taskContainer.innerHTML = "";
+
+    alert("All tasks cleared.");
+});
 
 
