@@ -39,13 +39,40 @@ def analyze_placeholder(request):
             status=status.HTTP_400_BAD_REQUEST
         )
 
-    # Default weights (temporary until strategy logic added)
-    weights = {
-        "urgency": 0.4,
-        "importance": 0.3,
-        "effort": 0.2,
-        "dependency": 0.1
+    # Determine strategy (default = smart)
+    strategy = (request.data.get("strategy") or "smart").lower()
+
+    # Weight distributions based on strategy
+    WEIGHT_PROFILES = {
+        "smart": {       # Balanced
+            "urgency": 0.4,
+            "importance": 0.3,
+            "effort": 0.2,
+            "dependency": 0.1
+        },
+        "fast": {        # Fastest Wins — effort only
+            "urgency": 0.0,
+            "importance": 0.0,
+            "effort": 1.0,
+            "dependency": 0.0
+        },
+        "impact": {      # High Impact — importance only
+            "urgency": 0.0,
+            "importance": 1.0,
+            "effort": 0.0,
+            "dependency": 0.0
+        },
+        "deadline": {    # Deadline Driven — urgency only
+            "urgency": 1.0,
+            "importance": 0.0,
+            "effort": 0.0,
+            "dependency": 0.0
+        }
     }
+
+    weights = WEIGHT_PROFILES.get(strategy, WEIGHT_PROFILES["smart"])
+    
+
 
     today = request.data.get("today", None)
 
