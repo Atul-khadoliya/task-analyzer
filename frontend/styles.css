@@ -308,3 +308,61 @@ button:disabled {
         padding: 18px;
     }
 }
+/* Dependency graph styling */
+.dep-node {
+    display: inline-block;
+    background: #dce7ff;
+    padding: 6px 12px;
+    margin: 4px;
+    border-radius: 6px;
+    font-weight: bold;
+    border: 1px solid #6b8cff;
+}
+
+.dep-arrow {
+    margin: 0 6px;
+    font-weight: bold;
+    color: #444;
+}
+
+/* ------------------------------
+   EISENHOWER MATRIX
+------------------------------ */
+
+#matrix-grid {
+    display: none;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 18px;
+    margin-top: 15px;
+}
+
+.matrix-box {
+    background: #ffffff;
+    padding: 15px;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    min-height: 160px;
+    border-left: 6px solid #ccc;
+}
+
+.matrix-content .matrix-item {
+    background: #f5f7fa;
+    padding: 8px 10px;
+    margin-bottom: 6px;
+    border-radius: 6px;
+    font-size: 14px;
+    border-left: 4px solid #4a90e2;
+}
+
+.matrix-sub {
+    color: #666;
+    font-size: 13px;
+    margin: 2px 0 10px;
+}
+
+/* Mobile responsive */
+@media (max-width: 600px) {
+    #matrix-grid {
+        grid-template-columns: 1fr;
+    }
+}

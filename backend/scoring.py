@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime,timedelta
 from dateutil.parser import parse as parse_date
 
 
@@ -12,14 +12,14 @@ def compute_urgency(due_date, today,horizon=30):
      if isinstance(today, str):
         today = datetime.strptime(today, "%Y-%m-%d").date()
 
-     days_left = (due_date - today).days
+     # NEW: working-days urgency
+     working_days_left = count_working_days(today, due_date)
 
-    # past due → maximum urgency
-     if days_left < 0:
-        return 1.0
+     if working_days_left <= 0:
+        return 1.0  # overdue = maximum urgency
 
     # normalize relative to horizon
-     urgency = 1 - (days_left / horizon)
+     urgency = 1 - (working_days_left / horizon)
 
     # clamp between 0 and 1
      urgency = max(0.0, min(1.0, urgency))
@@ -212,3 +212,19 @@ def build_explanation(components):
         return "No strong priority factors."
 
     return ", ".join(parts) + "."
+
+
+def count_working_days(start, end):
+    """
+    Count working days between start and end. 
+    Skips only Saturdays (5) and Sundays (6).
+    """
+    days = 0
+    current = start + timedelta(days=1)
+
+    while current <= end:
+        if current.weekday() < 5:   # Monday=0 ... Friday=4
+            days += 1
+        current += timedelta(days=1)
+
+    return max(days, 0)

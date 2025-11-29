@@ -61,6 +61,8 @@ document.getElementById("add-task-btn").addEventListener("click", () => {
     });
 
     renderLocalTasks();
+    renderDependencyGraph(tasks);
+
 });
 
 
@@ -109,6 +111,8 @@ document.getElementById("load-json-btn").addEventListener("click", () => {
     // Only accept JSON AFTER validation
     tasks = parsed;
     renderLocalTasks();
+    renderDependencyGraph(tasks);
+
 });
 
 
@@ -203,6 +207,8 @@ function renderResults(tasks) {
 
         container.appendChild(card);
     });
+    renderEisenhowerMatrix(tasks);
+
 }
 
 // Fetch the top 3 suggested tasks from backend
@@ -272,7 +278,9 @@ document.getElementById("clear-tasks-btn").addEventListener("click", () => {
     document.getElementById("results").innerHTML = "";
     document.getElementById("suggestions").innerHTML = "";
     document.getElementById("error-box").style.display = "none";
-
+    
+    // HIDE MATRIX AGAIN
+    document.getElementById("matrix-grid").style.display = "none";
     // also clear any local display of tasks
     const taskContainer = document.getElementById("task-list");
     if (taskContainer) taskContainer.innerHTML = "";
@@ -280,4 +288,61 @@ document.getElementById("clear-tasks-btn").addEventListener("click", () => {
     alert("All tasks cleared.");
 });
 
+function renderDependencyGraph(tasks) {
+    const container = document.getElementById("dependency-graph");
+    container.innerHTML = "";
+
+    if (!tasks || tasks.length === 0) {
+        container.innerHTML = "<p>No task dependencies.</p>";
+        return;
+    }
+
+    tasks.forEach(task => {
+        if (!task.dependencies || task.dependencies.length === 0) {
+            container.innerHTML += `
+                <div>
+                    <span class="dep-node">${task.id}</span>
+                </div>
+            `;
+        } else {
+            task.dependencies.forEach(dep => {
+                container.innerHTML += `
+                    <div>
+                        <span class="dep-node">${task.id}</span>
+                        <span class="dep-arrow">→</span>
+                        <span class="dep-node">${dep}</span>
+                    </div>
+                `;
+            });
+        }
+    });
+}
+
+function renderEisenhowerMatrix(tasks) {
+
+    document.getElementById("matrix-grid").style.display = "grid";
+    ["q1", "q2", "q3", "q4"].forEach(q => {
+        document.querySelector(`#${q} .matrix-content`).innerHTML = "";
+    });
+
+    tasks.forEach(t => {
+        const u = t.components.urgency;
+        const imp = t.components.importance;
+
+        let quadrant;
+        if (u >= 0.5 && imp >= 0.5) quadrant = "q1";      // Urgent + Important
+        else if (u < 0.5 && imp >= 0.5) quadrant = "q2"; // Not Urgent + Important
+        else if (u >= 0.5 && imp < 0.5) quadrant = "q3"; // Urgent + Not Important
+        else quadrant = "q4";                             // Not Urgent + Not Important
+
+        const div = document.createElement("div");
+        div.className = "matrix-item";
+        div.innerHTML = `
+            <b>${t.title}</b><br>
+            <small>U: ${u.toFixed(2)} | I: ${imp.toFixed(2)}</small>
+        `;
+
+        document.querySelector(`#${quadrant} .matrix-content`).appendChild(div);
+    });
+}
 
