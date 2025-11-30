@@ -122,12 +122,13 @@ C blocks none → 0.0
 ### **Final Score Formula**
 
 
-**score =
+**Score =
 (urgency * w_urgency) +
 (importance * w_importance) +
 (effort * w_effort) +
 (dependency * w_dependency)**
 
+Where w_urgency,w_importance,w_effort,w_dependency are corresponding weights
 Each component is returned along with a human-readable explanation.
 
 ---
