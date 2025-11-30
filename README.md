@@ -50,23 +50,18 @@ Open `frontend/index.html` using **Live Server**.
 The system assigns every task a **priority score from 0 to 1** using four weighted factors:
 
 ### **1. Urgency (deadline proximity)**
-- Uses **working days only** (skips Saturday/Sunday).
-- Closer deadlines → higher urgency.
-- Past-due tasks automatically get **urgency = 1.0**.
-  Rules:
+-If a task is past its deadline → urgency = 1.0
 
-If a task is past its deadline → urgency = 1.0
+-If due today → urgency = 1.0
 
-If due today → urgency = 1.0
+-The more working days left, the lower the urgency.
 
-The more working days left, the lower the urgency.
+-A configurable horizon (default 30 days) limits maximum “look-ahead”.
 
-A configurable horizon (default 30 days) limits maximum “look-ahead”.
-
-Formula:
+**Formula:**
    urgency = 1 - (working_days_left / horizon)
 
-Example:
+**Examples:**
 
 Due tomorrow (weekday) → urgency ≈ 0.96
 
@@ -75,12 +70,12 @@ Due in 20 working days → urgency ≈ 0.33
 Due in 100 days → urgency ≈ 0.0 
 
 ### **2. Importance (1–10 rating)**
-The user manually assigns importance between 1 and 10.
+-The user manually assigns importance between 1 and 10.
 
-We normalize it into a 0–1 scale
-
+-We normalize it into a 0–1 scale
+**Formula**
 importance = (importance_raw - 1) / 9
-Examples:
+**Examples:**
 
 Importance 10 → 1.0
 
@@ -89,23 +84,24 @@ Importance 5 → 0.44
 Importance 1 → 0.0
 
 ### **3. Effort (estimated hours)**
-“The less effort required, the higher the score.”
+-“The less effort required, the higher the score.”
 
-To encourage productivity momentum, effort is inverted, meaning small tasks score high.
-Steps:
+-To encourage productivity momentum, effort is inverted, meaning small tasks score high.
+**Steps:**
 
-Clamp effort to a maximum (default = 8 hours)
+-Clamp effort to a maximum (default = 8 hours)
 
-Convert to a score
+-Convert to a score
+**Formula**
 effort = 1 - (min(hours, max_hours) / max_hours)
 ### **4. Dependency Impact**
 If a task unblocks many others, it gets a higher dependency score.
 Dependencies form a directed graph.
 
-Dependency score:
+**Dependency score:**
 dependency = (# of tasks depending on this one) / (max dependents in graph)
 
-Examples:
+**Examples:**
 
 A blocks 5 tasks → 1.0
 
