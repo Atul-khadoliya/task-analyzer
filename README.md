@@ -13,8 +13,7 @@ All bonus tasks are fully implemented.
 git clone https://github.com/Atul-khadoliya/task-analyzer
 cd task-analyzer
 
-shell
-Copy code
+
 
 ### 2. Backend setup
 python -m venv venv
@@ -22,20 +21,15 @@ venv\Scripts\activate
 pip install -r requirements.txt
 cd backend
 
-shell
-Copy code
 
 ### 3. Run migrations
 python manage.py migrate
 
-shell
-Copy code
 
 ### 4. Start backend
 python manage.py runserver
 
-yaml
-Copy code
+
 
 ### 5. Start frontend  
 Open `frontend/index.html` using **Live Server**.
@@ -80,8 +74,7 @@ The system assigns every task a **priority score between 0 and 1** using **four 
 ### **Formula**
 urgency = 1 - (working_days_left / horizon)
 
-markdown
-Copy code
+
 
 ### **Examples**
 - Due tomorrow → ~0.96  
@@ -101,8 +94,7 @@ Importance is normalized to a 0–1 scale.
 ### **Formula**
 importance = (importance_raw - 1) / 9
 
-markdown
-Copy code
+
 
 ### **Examples**
 - Importance 10 → 1.0  
@@ -124,8 +116,7 @@ Copy code
 ### **Formula**
 effort = 1 - (min(hours, 8) / 8)
 
-markdown
-Copy code
+
 
 ### **Examples**
 - 1 hour → 0.875  
@@ -148,8 +139,6 @@ More direct dependents → higher score.
 ### **Formula**
 dependency = (# of direct dependents) / (max dependents in graph)
 
-yaml
-Copy code
 
 ### **Examples**
 - Blocks 5 tasks → 1.0  
@@ -165,14 +154,11 @@ The system constructs two graphs from the task list:
 ### **forward graph**
 task_id → [tasks it depends on]
 
-markdown
-Copy code
+
 
 ### **reverse graph**
 task_id → [tasks that depend on it]
 
-makefile
-Copy code
 
 ### Example
 If:
@@ -189,15 +175,14 @@ Then:
 3 → [1]
 
 lua
-Copy code
+
 
 **reverse**
 2 → [1]
 1 → [3]
 3 → []
 
-yaml
-Copy code
+
 
 ### What it's used for:
 - Dependency score  
@@ -212,15 +197,12 @@ Copy code
 The system finds loops such as:
 A → B → C → A
 
-yaml
-Copy code
+
 
 If detected, response includes:
 "cycle_detected": true,
 "cycle": [A, B, C, A]
 
-yaml
-Copy code
 
 ---
 
@@ -234,8 +216,7 @@ score =
 (effort * w_effort) +
 (dependency * w_dependency)
 
-yaml
-Copy code
+
 
 Each score is returned with:
 - Component breakdown
