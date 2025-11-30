@@ -4,4 +4,5 @@ from . import views
 urlpatterns = [
     path('analyze/', views.analyze_placeholder),
     path('suggest/', views.suggest_placeholder),
+    path("feedback/", views.submit_feedback),
 ]
