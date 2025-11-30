@@ -259,16 +259,23 @@ When the user marks a suggested task as “Helpful” or “Not Helpful”, the 
 ### Data Used
 
 components = {
+
     "urgency": <float 0–1>,
+    
     "importance": <float 0–1>,
+    
     "effort": <float 0–1>,
+    
     "dependency": <float 0–1>
 }
 
 weights = {
     "urgency": <float>,
+    
     "importance": <float>,
+    
     "effort": <float>,
+    
     "dependency": <float>
 }
 
