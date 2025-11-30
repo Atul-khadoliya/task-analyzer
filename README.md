@@ -11,191 +11,284 @@ All bonus tasks are fully implemented.
 
 ### 1. Clone the repository
 git clone https://github.com/Atul-khadoliya/task-analyzer
-
 cd task-analyzer
 
-
+shell
+Copy code
 
 ### 2. Backend setup
-
-
 python -m venv venv
-
 venv\Scripts\activate
-
 pip install -r requirements.txt
-
 cd backend
 
+shell
+Copy code
 
 ### 3. Run migrations
-
-
 python manage.py migrate
 
+shell
+Copy code
 
 ### 4. Start backend
-
-
 python manage.py runserver
 
+yaml
+Copy code
 
 ### 5. Start frontend  
 Open `frontend/index.html` using **Live Server**.
 
 ---
 
-## 🧠 How the Algorithm Works
+## 🔗 API Overview
 
-The system assigns every task a **priority score from 0 to 1** using four weighted factors:
+### **POST `/api/tasks/analyze/`**
+Takes a list of tasks and returns:
+- Computed priority score (0–1)
+- Breakdown of urgency, importance, effort, dependency
+- Human-readable explanation
+- Dependency graph structure
+- Cycle detection (if any)
+- Sorted list of tasks by priority
 
-### **1. Urgency (deadline proximity)**
--If a task is past its deadline → urgency = 1.0
+### **GET `/api/tasks/suggest/`**
+Returns the **top 3 tasks** the user should work on today, with explanations.
 
--If due today → urgency = 1.0
+---
 
--The more working days left, the lower the urgency.
+# 🧠 How the Algorithm Works
 
--A configurable horizon (default 30 days) limits maximum “look-ahead”.
+The system assigns every task a **priority score between 0 and 1** using **four components**:
 
-**Formula:**
+---
 
-   urgency = 1 - (working_days_left / horizon)
+# 1️⃣ Urgency (deadline proximity)
 
-**Examples:**
+### ✔ **Data Used**
+- `due_date` (deadline)
+- `today` (current date from API)
 
-Due tomorrow (weekday) → urgency ≈ 0.96
+### ✔ **How It Works**
+- If past due → `urgency = 1.0`
+- If due today → `1.0`
+- Fewer working days left → higher urgency
+- Weekends are ignored (Mon–Fri only)
+- Horizon (default 30 days) limits long-term deadlines
 
-Due in 20 working days → urgency ≈ 0.33
+### **Formula**
+urgency = 1 - (working_days_left / horizon)
 
-Due in 100 days → urgency ≈ 0.0 
+markdown
+Copy code
 
-### **2. Importance (1–10 rating)**
+### **Examples**
+- Due tomorrow → ~0.96  
+- Due in 20 working days → 0.33  
+- Due in 100 days → 0.0  
 
--The user manually assigns importance between 1 and 10.
+---
 
--We normalize it into a 0–1 scale
+# 2️⃣ Importance (1–10 rating)
 
-**Formula**
+### ✔ **Data Used**
+- `importance` (1–10) provided by user
 
+### ✔ **How It Works**
+Importance is normalized to a 0–1 scale.
+
+### **Formula**
 importance = (importance_raw - 1) / 9
 
+markdown
+Copy code
 
-**Examples:**
+### **Examples**
+- Importance 10 → 1.0  
+- Importance 5 → 0.44  
+- Importance 1 → 0.0  
 
-Importance 10 → 1.0
+---
 
-Importance 5 → 0.44
+# 3️⃣ Effort (estimated hours)
 
-Importance 1 → 0.0
+### ✔ **Data Used**
+- `estimated_hours`
 
-### **3. Effort (estimated hours)**
+### ✔ **How It Works**
+- Smaller tasks → higher score  
+- Large tasks → lower score  
+- Hours capped at 8
 
--“The less effort required, the higher the score.”
+### **Formula**
+effort = 1 - (min(hours, 8) / 8)
 
--To encourage productivity momentum, effort is inverted, meaning small tasks score high.
+markdown
+Copy code
 
+### **Examples**
+- 1 hour → 0.875  
+- 4 hours → 0.5  
+- 10 hours → 0.0  
 
-**Steps:**
+---
 
--Clamp effort to a maximum (default = 8 hours)
+# 4️⃣ Dependency Impact
 
--Convert to a score
+### ✔ **Data Used**
+- Task ID  
+- Automatically built **dependency graph** (reverse graph)
 
+### ✔ **What It Means**
+> “How many tasks get unblocked if I do this task?”
 
-**Formula**
+More direct dependents → higher score.
 
-effort = 1 - (min(hours, max_hours) / max_hours)
+### **Formula**
+dependency = (# of direct dependents) / (max dependents in graph)
 
+yaml
+Copy code
 
-### **4. Dependency Impact**
+### **Examples**
+- Blocks 5 tasks → 1.0  
+- Blocks 2 tasks → 0.4  
+- Blocks none → 0.0  
 
-If a task unblocks many others, it gets a higher dependency score.
-Dependencies form a directed graph.
+---
 
-**Dependency score:**
+# 🏗 How the Dependency Graph Is Built
 
-dependency = (# of tasks depending on this one) / (max dependents in graph)
+The system constructs two graphs from the task list:
 
-**Examples:**
+### **forward graph**
+task_id → [tasks it depends on]
 
+markdown
+Copy code
 
-A blocks 5 tasks → 1.0
+### **reverse graph**
+task_id → [tasks that depend on it]
 
-B blocks 2 tasks → 0.4
+makefile
+Copy code
 
-C blocks none → 0.0
-### **Final Score Formula**
+### Example
+If:
+1 depends on 2
+3 depends on 1
 
+makefile
+Copy code
 
-**Score =
+Then:
+
+**forward**
+1 → [2]
+3 → [1]
+
+lua
+Copy code
+
+**reverse**
+2 → [1]
+1 → [3]
+3 → []
+
+yaml
+Copy code
+
+### What it's used for:
+- Dependency score  
+- Cycle detection  
+- Eisenhower matrix insights  
+- Explanations like “Blocks many tasks”  
+
+---
+
+# 🔄 Cycle Detection
+
+The system finds loops such as:
+A → B → C → A
+
+yaml
+Copy code
+
+If detected, response includes:
+"cycle_detected": true,
+"cycle": [A, B, C, A]
+
+yaml
+Copy code
+
+---
+
+# 🧮 Final Score Formula
+
+All components are combined using weights:
+
+score =
 (urgency * w_urgency) +
 (importance * w_importance) +
 (effort * w_effort) +
-(dependency * w_dependency)**
+(dependency * w_dependency)
 
-Where **w_urgency ,w_importanc ,w_effort ,w_dependency** are corresponding weights
-Each component is returned along with a human-readable explanation.
+yaml
+Copy code
+
+Each score is returned with:
+- Component breakdown
+- Human-readable explanation
 
 ---
 
-## 🎚 Default Weights & Learning System
-
-The default weights for the **Smart Balance** strategy are:
+# 🎚 Default Weights & Learning System
 
 | Component   | Weight |
 |------------|--------|
-| Urgency    | 0.4    |
-| Importance | 0.3    |
-| Effort     | 0.2    |
-| Dependency | 0.1    |
+| Urgency    | 0.4 |
+| Importance | 0.3 |
+| Effort     | 0.2 |
+| Dependency | 0.1 |
 
-These weights are stored in a singleton model so they persist across sessions.
+Weights are stored in a **singleton model**.
 
-### Why these weights?
-
-### ✔ **Urgency = 0.4 (Highest)**  
-Deadlines have immediate consequences. The system must always prioritize time-critical tasks.
-
-### ✔ **Importance = 0.3**  
-Importance matters, but not at the cost of missing deadlines.
-
-### ✔ **Effort = 0.2**  
-Low-effort tasks boost productivity momentum, but shouldn’t outrank important or urgent tasks.
-
-### ✔ **Dependency = 0.1**  
-Useful but situational; a small weight ensures it influences the ranking without dominating it.
+### ✔ Why these weights?
+- Urgency matters most (deadlines)
+- Importance next
+- Effort encourages quick wins
+- Dependency is situational but helpful
 
 ---
 
-## 🔁 Adaptive Learning (Bonus Feature)
+# 🔁 Adaptive Learning (Bonus Feature)
 
-When the user clicks **“Helpful”** or **“Not Helpful”**, the system adjusts weights:
+When the user marks a suggestion as:
 
-- If helpful → increase weights for factors that were high for that task.
-- If not helpful → decrease them.
+- 👍 Helpful  
+- 👎 Not Helpful  
 
-After adjustments, weights are normalized so they always sum to 1.
+The system:
+1. Increases/decreases weights depending on component values  
+2. Normalizes weights  
+3. Saves updated weights  
+4. Next scoring becomes personalized
 
-Over time, the system adapts to the user's real behavior:
-- Prefers urgent tasks → urgency weight grows  
-- Prefers high-impact tasks → importance weight grows  
-- Prefers quick wins → effort weight grows  
-- Prefers unblockers → dependency weight grows  
-
-This makes the scoring algorithm **personalized**.
+### Example:
+- User consistently prefers urgent tasks → urgency weight increases  
+- User prefers low-effort tasks → effort weight goes up  
 
 ---
 
-## 🧩 Bonus Features Implemented
-
-All major bonus challenges completed:
-
+# 🧩 Bonus Features Implemented
 - ✔ Dependency Graph Visualization  
 - ✔ Eisenhower Matrix  
-- ✔ Weekend-Aware Date Intelligence  
-- ✔ Learning System with persistent weights  
-- ✔ Full Unit Tests for scoring logic  
+- ✔ Weekend-Aware Urgency  
+- ✔ Adaptive Learning System  
+- ✔ Cycle Detection  
+- ✔ Persistent Weight Model  
+- ✔ Full Unit Tests  
 
 ---
 
@@ -218,16 +311,10 @@ All major bonus challenges completed:
 
 ## 🔮 Future Improvements
 
-With more time, I would add:
-
-- Modern interactive UI (React + D3.js)
-- Global holiday calendars in urgency calculation
-- Drag-and-drop dependency editing
-- User accounts with personalized profiles
-- Machine-learned priority predictions
-- Kanban + Gantt visualizations
-- Multi-day focus planning based on constraints
-
----
-
-
+- React + D3.js interactive UI  
+- Holiday-aware urgency  
+- Drag-and-drop dependency editing  
+- User accounts with personalized profiles  
+- ML-based task predictions  
+- Gantt + Kanban views  
+- Multi-day planning  
