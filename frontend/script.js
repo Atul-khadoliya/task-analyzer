@@ -266,11 +266,19 @@ function renderSuggestions(suggestions) {
             <div class="explanation-box">
                 <b>Why this task:</b> ${s.why}
             </div>
+
+            <div class="feedback-buttons">
+                <button class="feedback-yes" data-id="${s.id}">👍 Helpful</button>
+                <button class="feedback-no" data-id="${s.id}">👎 Not Helpful</button>
+            </div>
         `;
 
         container.appendChild(card);
     });
+
+    attachFeedbackHandlers(); // IMPORTANT: activate buttons
 }
+
 
 document.getElementById("clear-tasks-btn").addEventListener("click", () => {
     tasks = []; // empty task list
@@ -346,3 +354,41 @@ function renderEisenhowerMatrix(tasks) {
     });
 }
 
+function attachFeedbackHandlers() {
+    document.querySelectorAll(".feedback-yes").forEach(btn => {
+        btn.addEventListener("click", () => {
+            sendFeedback(btn.dataset.id, true);
+        });
+    });
+
+    document.querySelectorAll(".feedback-no").forEach(btn => {
+        btn.addEventListener("click", () => {
+            sendFeedback(btn.dataset.id, false);
+        });
+    });
+}
+
+async function sendFeedback(task_id, was_helpful) {
+    try {
+        const response = await fetch("http://127.0.0.1:8000/api/tasks/feedback/", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ task_id, was_helpful })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+            alert("Error: " + JSON.stringify(data));
+            return;
+        }
+
+        alert(
+            "Feedback saved!\n\nUpdated Weights:\n" +
+            JSON.stringify(data.weights, null, 2)
+        );
+
+    } catch (err) {
+        alert("Network error submitting feedback.");
+    }
+}

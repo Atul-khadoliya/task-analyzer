@@ -366,3 +366,39 @@ button:disabled {
         grid-template-columns: 1fr;
     }
 }
+
+
+.feedback-buttons {
+    margin-top: 12px;
+    display: flex;
+    gap: 10px;
+}
+
+.feedback-yes, .feedback-no {
+    flex: 1;
+    padding: 10px;
+    font-size: 14px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    transition: 0.2s ease;
+}
+
+.feedback-yes {
+    background: #2ecc71;
+    color: white;
+}
+
+.feedback-yes:hover {
+    background: #27ae60;
+}
+
+.feedback-no {
+    background: #e74c3c;
+    color: white;
+}
+
+.feedback-no:hover {
+    background: #c0392b;
+}

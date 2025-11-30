@@ -2,28 +2,28 @@ from datetime import datetime,timedelta
 from dateutil.parser import parse as parse_date
 
 
-def compute_urgency(due_date, today,horizon=30):
-     if not due_date:
+def compute_urgency(due_date, today, horizon=30):
+    if not due_date:
         return 0.1  # missing due date → low urgency
 
     # convert strings to date objects
-     if isinstance(due_date, str):
+    if isinstance(due_date, str):
         due_date = datetime.strptime(due_date, "%Y-%m-%d").date()
-     if isinstance(today, str):
+    if isinstance(today, str):
         today = datetime.strptime(today, "%Y-%m-%d").date()
 
-     # NEW: working-days urgency
-     working_days_left = count_working_days(today, due_date)
+    # working-days urgency
+    working_days_left = count_working_days(today, due_date)
 
-     if working_days_left <= 0:
+    if working_days_left <= 0:
         return 1.0  # overdue = maximum urgency
 
     # normalize relative to horizon
-     urgency = 1 - (working_days_left / horizon)
+    urgency = 1 - (working_days_left / horizon)
 
     # clamp between 0 and 1
-     urgency = max(0.0, min(1.0, urgency))
-     return urgency
+    urgency = max(0.0, min(1.0, urgency))
+    return urgency
 
 def compute_importance(importance):
       if importance is None:
