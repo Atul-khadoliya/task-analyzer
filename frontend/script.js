@@ -15,7 +15,7 @@ document.getElementById("add-task-btn").addEventListener("click", () => {
     const importance = Number(document.getElementById("task-importance").value);
     const dependenciesRaw = document.getElementById("task-dependencies").value.trim();
 
-    // FRONTEND VALIDATION — must match backend rules
+    // FRONTEND VALIDATION 
     if (!id) {
         alert("ID is required.");
         return;
@@ -50,7 +50,7 @@ document.getElementById("add-task-btn").addEventListener("click", () => {
         ? dependenciesRaw.split(",").map(d => d.trim())
         : [];
 
-    // Only push task AFTER validation
+    //  push task AFTER validation
     tasks.push({
         id,
         title,
@@ -108,7 +108,7 @@ document.getElementById("load-json-btn").addEventListener("click", () => {
         }
     }
 
-    // Only accept JSON AFTER validation
+    //  accept JSON AFTER validation
     tasks = parsed;
     renderLocalTasks();
     renderDependencyGraph(tasks);
@@ -276,7 +276,7 @@ function renderSuggestions(suggestions) {
         container.appendChild(card);
     });
 
-    attachFeedbackHandlers(); // IMPORTANT: activate buttons
+    attachFeedbackHandlers(); //  activate buttons
 }
 
 
@@ -289,7 +289,7 @@ document.getElementById("clear-tasks-btn").addEventListener("click", () => {
     
     // HIDE MATRIX AGAIN
     document.getElementById("matrix-grid").style.display = "none";
-    // also clear any local display of tasks
+    // clear any local display of tasks
     const taskContainer = document.getElementById("task-list");
     if (taskContainer) taskContainer.innerHTML = "";
 

@@ -1,0 +1,39 @@
+2f97376 Sun Nov 30 20:06:13 2025 Prepare for production: gunicorn, whitenoise, dj-db-url, cors
+d304b22 Sun Nov 30 19:26:24 2025 chore: add django-cors-headers to requirements
+64f478e Sun Nov 30 17:14:16 2025 Merge learning system into main
+ee2a7d6 Sun Nov 30 17:12:09 2025 Integrate learning system into scoring + update feedback logic
+3c9801c Sun Nov 30 17:02:52 2025 Update README.md
+28c76f2 Sun Nov 30 17:01:55 2025 Fix typos in README weights description
+c8d7ed2 Sun Nov 30 17:00:55 2025 Update README.md
+2137b55 Sun Nov 30 16:58:24 2025 Update README.md
+c2c1f17 Sun Nov 30 16:56:49 2025 Update README.md
+4855eea Sun Nov 30 16:56:14 2025 Update README.md
+9c579f7 Sun Nov 30 16:51:30 2025 Update README.md
+38413ae Sun Nov 30 16:09:36 2025 Update README with backend setup instructions
+c6903cf Sun Nov 30 16:08:41 2025 Update README.md
+e299782 Sun Nov 30 15:59:11 2025 Create README.md
+db47d63 Sun Nov 30 15:27:27 2025 Add feedback UI and integrate learning system with backend (helpful/not helpful buttons, POST /feedback)
+a122905 Sun Nov 30 15:25:47 2025 Add comprehensive unit tests for scoring algorithm (urgency, importance, effort, dependency, cycle detection, working-days logic)
+4d03561 Sun Nov 30 00:50:53 2025 feat: add working-day based urgency calculation and update scoring logic
+eba23d6 Fri Nov 28 00:28:46 2025 Complete scoring pipeline + UI polish: added due_date storage, improved suggestion cards, fixed DB sync, enhanced card layout and styling
+09ac9d9 Thu Nov 27 17:01:15 2025 feat: finalize strategy-based scoring weights (smart, fast, impact, deadline)
+21f4074 Thu Nov 27 03:32:58 2025 feat: implement frontend
+f0370b8 Thu Nov 27 02:22:27 2025 feat: add human-readable explanation builder for task priority
+d7bd0e9 Thu Nov 27 02:13:34 2025 feat: store analyzed task results in the database with session_id
+bb3e35a Thu Nov 27 02:08:54 2025 feat: add AnalyzedTask model for storing analyzed task results in DB
+0d25529 Thu Nov 27 00:05:17 2025 feat: integrate cycle detection into analyze endpoint with proper 400 response
+8d198de Wed Nov 26 23:57:13 2025 feat: implement final score combination using weighted factors
+c5bfd6c Wed Nov 26 23:53:42 2025 feat: implement dependency score based on normalized dependent count
+dc7c321 Wed Nov 26 23:50:58 2025 feat: implement dependency graph builder with forward and reverse edges
+f21e130 Wed Nov 26 23:47:33 2025 feat: implement inverse effort scoring for quick-win prioritization
+6962937 Wed Nov 26 23:42:27 2025 feat: implement importance normalization with default and bounds checking
+827cf6f Wed Nov 26 23:35:09 2025 feat: implement urgency scoring with normalization and past-due handling
+b64eeee Wed Nov 26 23:19:15 2025 feat: connect serializer and scoring skeleton to analyze endpoint
+ae14b89 Wed Nov 26 22:59:53 2025 feat: add structured scoring module with placeholder functions
+cdf7ba1 Wed Nov 26 22:55:43 2025 feat: add basic TaskSerializer structure for task validation
+827d214 Wed Nov 26 22:52:57 2025 feat: add placeholder analyze and suggest endpoints with routing
+8e36a48 Wed Nov 26 22:46:45 2025 chore: register taskapp in Django settings
+411ca13 Wed Nov 26 22:26:36 2025 chore: add scoring module, serializers file, and urls file to taskapp
+b1df57e Wed Nov 26 22:20:23 2025 feat: edited
+455acaf Wed Nov 26 22:17:36 2025 feat: create taskapp Django app scaffold
+b614497 Wed Nov 26 22:14:44 2025 chore: initialize project folder and git repo
