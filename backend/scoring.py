@@ -223,7 +223,7 @@ def count_working_days(start, end):
     current = start + timedelta(days=1)
 
     while current <= end:
-        if current.weekday() < 5:   # Monday=0 ... Friday=4
+        if current.weekday() < 5:   
             days += 1
         current += timedelta(days=1)
 

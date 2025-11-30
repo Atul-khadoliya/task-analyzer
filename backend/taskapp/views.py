@@ -54,7 +54,7 @@ def analyze_placeholder(request):
         "deadline":  {"urgency": 1.0, "importance": 0.0, "effort": 0.0, "dependency": 0.0},
     }
 
-    # Resolve weights (learned only for "smart")
+    # Resolve weights 
     if strategy in ["fast", "impact", "deadline"]:
         weights = WEIGHT_PROFILES[strategy]
     else:
@@ -94,6 +94,10 @@ def analyze_placeholder(request):
             "components": result["components"],
             "explanation": explanation
         })
+    
+    # Sort by score (highest → lowest)
+    scored_tasks = sorted(scored_tasks, key=lambda x: x["score"], reverse=True)
+
 
     # Create session
     session_id = uuid.uuid4()
