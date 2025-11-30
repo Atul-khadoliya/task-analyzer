@@ -90,21 +90,29 @@ Importance 1 → 0.0
 -“The less effort required, the higher the score.”
 
 -To encourage productivity momentum, effort is inverted, meaning small tasks score high.
+
+
 **Steps:**
 
 -Clamp effort to a maximum (default = 8 hours)
 
 -Convert to a score
+
+
 **Formula**
 effort = 1 - (min(hours, max_hours) / max_hours)
+
+
 ### **4. Dependency Impact**
 If a task unblocks many others, it gets a higher dependency score.
 Dependencies form a directed graph.
 
 **Dependency score:**
+
 dependency = (# of tasks depending on this one) / (max dependents in graph)
 
 **Examples:**
+
 
 A blocks 5 tasks → 1.0
 
@@ -114,11 +122,11 @@ C blocks none → 0.0
 ### **Final Score Formula**
 
 
-score =
+**score =
 (urgency * w_urgency) +
 (importance * w_importance) +
 (effort * w_effort) +
-(dependency * w_dependency)
+(dependency * w_dependency)**
 
 Each component is returned along with a human-readable explanation.
 
