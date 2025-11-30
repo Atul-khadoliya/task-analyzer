@@ -11,18 +11,24 @@ All bonus tasks are fully implemented.
 
 ### 1. Clone the repository
 git clone https://github.com/Atul-khadoliya/task-analyzer
+
 cd task-analyzer
 
 
 
 ### 2. Backend setup
+
 python -m venv venv
+
 venv\Scripts\activate
+
 pip install -r requirements.txt
+
 cd backend
 
 
 ### 3. Run migrations
+
 python manage.py migrate
 
 
