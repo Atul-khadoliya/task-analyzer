@@ -1,3 +1,73 @@
+# Smart Task Analyzer
+
+Smart Task Analyzer is a full-stack intelligent task-prioritization system built using **Django REST Framework** and **Vanilla JavaScript**.  
+It analyzes tasks, computes priority scores, visualizes dependencies, draws an Eisenhower Matrix, learns from user feedback, includes weekend-aware urgency, and features complete unit tests.
+
+All bonus tasks are fully implemented.
+
+---
+
+## 🚀 Setup Instructions
+
+### 1. Clone the repository
+git clone https://github.com/Atul-khadoliya/task-analyzer
+cd task-analyzer
+
+
+
+### 2. Backend setup
+
+
+cd backend
+python -m venv venv
+venv\Scripts\activate
+pip install -r requirements.txt
+
+
+### 3. Run migrations
+
+
+python manage.py migrate
+
+
+### 4. Start backend
+
+
+python manage.py runserver
+
+
+### 5. Start frontend  
+Open `frontend/index.html` using **Live Server**.
+
+---
+
+## 🧠 How the Algorithm Works
+
+The system assigns every task a **priority score from 0 to 1** using four weighted factors:
+
+### **1. Urgency (deadline proximity)**
+- Uses **working days only** (skips Saturday/Sunday).
+- Closer deadlines → higher urgency.
+- Past-due tasks automatically get **urgency = 1.0**.
+
+### **2. Importance (1–10 rating)**
+Normalized to a 0–1 scale.
+
+### **3. Effort (estimated hours)**
+Effort is inverted — tasks requiring fewer hours score higher.
+This encourages “quick wins” and productivity momentum.
+
+### **4. Dependency Impact**
+If a task unblocks many others, it gets a higher dependency score.
+
+### **Final Score Formula**
+
+
+score =
+(urgency * w_urgency) +
+(importance * w_importance) +
+(effort * w_effort) +
+(dependency * w_dependency)
 
 Each component is returned along with a human-readable explanation.
 
@@ -93,4 +163,5 @@ With more time, I would add:
 - Multi-day focus planning based on constraints
 
 ---
+
 
