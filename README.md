@@ -252,24 +252,99 @@ Weights are stored in a **singleton model**.
 
 ---
 
-# 🔁 Adaptive Learning (Bonus Feature)
+## 🔁 Adaptive Learning (Bonus Feature)
 
-When the user marks a suggestion as:
+When the user marks a suggested task as “Helpful” or “Not Helpful”, the system adjusts future scoring based on the actual component values of that task.
 
-- 👍 Helpful  
-- 👎 Not Helpful  
+### Data Used
 
-The system:
-1. Increases/decreases weights depending on component values  
-2. Normalizes weights  
-3. Saves updated weights  
-4. Next scoring becomes personalized
+components = {
+    "urgency": <float 0–1>,
+    "importance": <float 0–1>,
+    "effort": <float 0–1>,
+    "dependency": <float 0–1>
+}
 
-### Example:
-- User consistently prefers urgent tasks → urgency weight increases  
-- User prefers low-effort tasks → effort weight goes up  
+weights = {
+    "urgency": <float>,
+    "importance": <float>,
+    "effort": <float>,
+    "dependency": <float>
+}
+
+These two data structures drive the learning update.
 
 ---
+
+### How the System Reacts
+
+#### Helpful (👍):
+- Increase weights of components that were strong in the suggested task.
+- Example:
+    - If urgency = 0.92 and effort = 0.80, both weights receive a boost.
+
+#### Not Helpful (👎):
+- Decrease weights of components that were strong in the suggested task.
+- Example:
+    - If urgency is high but the user marks the task as not helpful, urgency weight decreases.
+
+---
+
+### Weight Adjustment Logic (Core Formula)
+
+For each component:
+
+    new_weight = old_weight ± (component_value * learning_rate)
+
+- Use “+” for Helpful
+- Use “–” for Not Helpful
+- learning_rate is small (e.g., 0.05)
+
+Components with higher values have a stronger effect on weight updates.
+
+---
+
+### Normalization (Required Step)
+
+After modification, weights may no longer sum to 1.  
+We normalize them:
+
+    total = sum(all_weights)
+    weight[x] = weight[x] / total
+
+Example:
+    Temporary weights:
+        urgency:    0.45
+        importance: 0.30
+        effort:     0.23
+        dependency: 0.12
+
+    After normalization:
+        urgency:    0.41
+        importance: 0.27
+        effort:     0.21
+        dependency: 0.11
+
+---
+
+### Persistence
+
+The updated weights are saved into a **singleton model** in the database:
+
+- Updates persist across runs
+- All future scoring uses updated weights
+- System becomes personalized over time
+
+---
+
+### Personalization Effects
+
+- If user prefers urgent tasks → urgency weight increases
+- If user prefers quick wins → effort weight increases
+- If user likes high-impact tasks → importance weight increases
+- If user prefers tasks that unblock others → dependency weight increases
+
+Over repeated feedback, the system becomes a personalized task recommender.
 
 # 🧩 Bonus Features Implemented
 - ✔ Dependency Graph Visualization  
