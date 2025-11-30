@@ -53,17 +53,65 @@ The system assigns every task a **priority score from 0 to 1** using four weight
 - Uses **working days only** (skips Saturday/Sunday).
 - Closer deadlines → higher urgency.
 - Past-due tasks automatically get **urgency = 1.0**.
+  Rules:
+
+If a task is past its deadline → urgency = 1.0
+
+If due today → urgency = 1.0
+
+The more working days left, the lower the urgency.
+
+A configurable horizon (default 30 days) limits maximum “look-ahead”.
+
+Formula:
+   urgency = 1 - (working_days_left / horizon)
+
+Example:
+
+Due tomorrow (weekday) → urgency ≈ 0.96
+
+Due in 20 working days → urgency ≈ 0.33
+
+Due in 100 days → urgency ≈ 0.0 
 
 ### **2. Importance (1–10 rating)**
-Normalized to a 0–1 scale.
+The user manually assigns importance between 1 and 10.
+
+We normalize it into a 0–1 scale
+
+importance = (importance_raw - 1) / 9
+Examples:
+
+Importance 10 → 1.0
+
+Importance 5 → 0.44
+
+Importance 1 → 0.0
 
 ### **3. Effort (estimated hours)**
-Effort is inverted — tasks requiring fewer hours score higher.
-This encourages “quick wins” and productivity momentum.
+“The less effort required, the higher the score.”
 
+To encourage productivity momentum, effort is inverted, meaning small tasks score high.
+Steps:
+
+Clamp effort to a maximum (default = 8 hours)
+
+Convert to a score
+effort = 1 - (min(hours, max_hours) / max_hours)
 ### **4. Dependency Impact**
 If a task unblocks many others, it gets a higher dependency score.
+Dependencies form a directed graph.
 
+Dependency score:
+dependency = (# of tasks depending on this one) / (max dependents in graph)
+
+Examples:
+
+A blocks 5 tasks → 1.0
+
+B blocks 2 tasks → 0.4
+
+C blocks none → 0.0
 ### **Final Score Formula**
 
 
