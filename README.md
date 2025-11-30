@@ -165,8 +165,7 @@ If:
 1 depends on 2
 3 depends on 1
 
-makefile
-Copy code
+
 
 Then:
 
