@@ -153,47 +153,76 @@ dependency = (# of direct dependents) / (max dependents in graph)
 
 ---
 
-# 🏗 How the Dependency Graph Is Built
+## 🔗 Dependency Graph Visualization
 
-The system constructs two graphs from the task list using DFS (depth-first search) algorithm:
+The system builds a directed graph to understand how tasks depend on one another and to visually show which tasks block others.
 
-### **forward graph**
-task_id → [tasks it depends on]
+### Data Used
 
+Each input task includes:
 
+    {
+        "id": int,
+        "dependencies": [list of task IDs]
+    }
 
-### **reverse graph**
-task_id → [tasks that depend on it]
+From this, two graphs are built:
 
+    forward[id]  = tasks this task depends on
+    reverse[id]  = tasks that depend on this task
 
-### Example
-If:
-1 depends on 2
+---
 
-3 depends on 1
+### Graph Construction
 
+Pseudocode:
 
+    initialize forward and reverse maps for all task IDs
 
-Then:
+    for each task in tasks:
+        forward[task.id] = task.dependencies
+        for dep in task.dependencies:
+            reverse[dep].append(task.id)
 
-**forward**
-1 → [2]
+Example:
 
-3 → [1]
+    Task 1 depends on [2]
+    Task 3 depends on [1]
 
+Produces:
 
+    forward:
+        1 → [2]
+        2 → []
+        3 → [1]
 
+    reverse:
+        1 → [3]
+        2 → [1]
+        3 → []
 
-**reverse**
-2 → [1]
+---
 
-1 → [3]
+### How the Visualization Uses This Data
 
-3 → []
+The frontend receives the graph and renders:
 
+- arrows showing dependency direction
+- highlighting of tasks that unblock others
+- visual warning if a cycle is detected
+- task nodes sized or colored based on dependency score
 
+---
+
+### Why This Matters
+
+- Users can see bottlenecks (tasks many others depend on)
+- Helps identify the “best leverage points” to work on first
+- Makes the system more intuitive and transparent
 
 ### What it's used for:
+
+
 - Dependency score  
 - Cycle detection  
 - Eisenhower matrix insights  
