@@ -59,6 +59,7 @@ The system assigns every task a **priority score from 0 to 1** using four weight
 -A configurable horizon (default 30 days) limits maximum “look-ahead”.
 
 **Formula:**
+
    urgency = 1 - (working_days_left / horizon)
 
 **Examples:**
@@ -70,11 +71,13 @@ Due in 20 working days → urgency ≈ 0.33
 Due in 100 days → urgency ≈ 0.0 
 
 ### **2. Importance (1–10 rating)**
+
 -The user manually assigns importance between 1 and 10.
 
 -We normalize it into a 0–1 scale
 
 **Formula**
+
 importance = (importance_raw - 1) / 9
 
 
@@ -87,6 +90,7 @@ Importance 5 → 0.44
 Importance 1 → 0.0
 
 ### **3. Effort (estimated hours)**
+
 -“The less effort required, the higher the score.”
 
 -To encourage productivity momentum, effort is inverted, meaning small tasks score high.
@@ -100,10 +104,12 @@ Importance 1 → 0.0
 
 
 **Formula**
+
 effort = 1 - (min(hours, max_hours) / max_hours)
 
 
 ### **4. Dependency Impact**
+
 If a task unblocks many others, it gets a higher dependency score.
 Dependencies form a directed graph.
 
