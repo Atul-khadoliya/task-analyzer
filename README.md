@@ -155,7 +155,7 @@ dependency = (# of direct dependents) / (max dependents in graph)
 
 # 🏗 How the Dependency Graph Is Built
 
-The system constructs two graphs from the task list:
+The system constructs two graphs from the task list using DFS (depth-first search) algorithm:
 
 ### **forward graph**
 task_id → [tasks it depends on]
