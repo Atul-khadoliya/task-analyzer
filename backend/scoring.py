@@ -12,7 +12,7 @@ def compute_urgency(due_date, today, horizon=30):
     if isinstance(today, str):
         today = datetime.strptime(today, "%Y-%m-%d").date()
 
-    # NEW: working-days urgency
+    # working-days urgency
     working_days_left = count_working_days(today, due_date)
 
     if working_days_left <= 0:

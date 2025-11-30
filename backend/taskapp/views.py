@@ -14,9 +14,9 @@ from scoring import (
 )
 
 
-# ---------------------------------------------------------------------
+
 # ANALYZE ENDPOINT
-# ---------------------------------------------------------------------
+
 
 @api_view(['POST'])
 def analyze_placeholder(request):
@@ -118,9 +118,9 @@ def analyze_placeholder(request):
     })
 
 
-# ---------------------------------------------------------------------
+
 # SUGGEST ENDPOINT
-# ---------------------------------------------------------------------
+
 
 @api_view(['GET'])
 def suggest_placeholder(request):
@@ -166,9 +166,9 @@ def suggest_placeholder(request):
     })
 
 
-# ---------------------------------------------------------------------
+
 # FEEDBACK ENDPOINT (LEARNING SYSTEM)
-# ---------------------------------------------------------------------
+
 
 @api_view(['POST'])
 def submit_feedback(request):
