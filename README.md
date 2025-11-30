@@ -19,13 +19,13 @@ cd task-analyzer
 ### 2. Backend setup
 
 
-cd backend
-
 python -m venv venv
 
 venv\Scripts\activate
 
 pip install -r requirements.txt
+
+cd backend
 
 
 ### 3. Run migrations
