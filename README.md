@@ -128,7 +128,7 @@ C blocks none → 0.0
 (effort * w_effort) +
 (dependency * w_dependency)**
 
-Where w_urgency,w_importance,w_effort,w_dependency are corresponding weights
+Where **w_urgency ,w_importanc ,w_effort ,w_dependency** are corresponding weights
 Each component is returned along with a human-readable explanation.
 
 ---
