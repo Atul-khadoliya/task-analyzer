@@ -73,8 +73,11 @@ Due in 100 days → urgency ≈ 0.0
 -The user manually assigns importance between 1 and 10.
 
 -We normalize it into a 0–1 scale
+
 **Formula**
 importance = (importance_raw - 1) / 9
+
+
 **Examples:**
 
 Importance 10 → 1.0
