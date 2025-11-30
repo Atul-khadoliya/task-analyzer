@@ -11,6 +11,7 @@ All bonus tasks are fully implemented.
 
 ### 1. Clone the repository
 git clone https://github.com/Atul-khadoliya/task-analyzer
+
 cd task-analyzer
 
 
@@ -19,8 +20,11 @@ cd task-analyzer
 
 
 cd backend
+
 python -m venv venv
+
 venv\Scripts\activate
+
 pip install -r requirements.txt
 
 
