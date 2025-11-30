@@ -169,6 +169,7 @@ task_id → [tasks that depend on it]
 ### Example
 If:
 1 depends on 2
+
 3 depends on 1
 
 
@@ -179,7 +180,7 @@ Then:
 1 → [2]
 3 → [1]
 
-lua
+
 
 
 **reverse**
